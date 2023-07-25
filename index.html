@@ -70,16 +70,31 @@
     <h3>Using Bidirectional Encoder Representations from Transformers (BERT)</h3>
     <p>
       We utilized Bidirectional Encoder Representations from Transformers (BERT) to get an initial prediction on the review content (text) alone. We used BERT because it is good for contextual learning. It uses word embeddings to learn the context of the words in the reviews. This means that it is bidirectional and will look to the left and right of each word to understand the context of how words are being used. It can also understand metaphors, which is useful in the context of looking at customer reviews. Specifically, we used the BERT base cased model as this model takes into account capitalization. We chose this model because many reviews use capitalization to emphasize words and this can be taken into account.
-      We had to tokenize the data from the labeled dataset which inserts labels into the review content to show if it’s the start or the end of sentences. We then ran the tokenized review content data with their respective labels into the model to train it. We split the data into training and testing data by utilizing stratified sampling, which divides the dataset into subgroups and samples from each group. This is to maintain the representation of the data since there are more real reviews than there are fake reviews. The length of the training data was 53,615 reviews where 46,973 were real reviews and 6,642 were fake reviews. The length of the test data is 13,404 reviews where 11,661 were real reviews and 1,743 were fake reviews. From both the training and test data, 87% of the datasets were real reviews and 13% were fake. To fine-tune the model, we used an AdamW optimizer to control the weight decays, and linear schedulers to make the learning rate dynamic. In the beginning, we used 3 epochs with a learning rate of 2e-5, batch size of 32, and warmup_steps of 500 steps to reduce the learning rate in the beginning to not significantly impact the training. After training the BERT model, the training accuracy was 87%. The testing results can be seen in our results section.
-    </p>
+      We had to tokenize the data from the labeled dataset which inserts labels into the review content to show if it’s the start or the end of sentences. We then ran the tokenized review content data with their respective labels into the model to train it. We split the data into training and testing data by utilizing stratified sampling, which divides the dataset into subgroups and samples from each group. This is to maintain the representation of the data since there are more real reviews than there are fake reviews. The length of the training data was 53,615 reviews where 46,973 were real reviews and 6,642 were fake reviews. The length of the test data is 13,404 reviews where 11,661 were real reviews and 1,743 were fake reviews. From both the training and test data, 87% of the datasets were real reviews and 13% were fake. To fine-tune the model, we used an AdamW optimizer to control the weight decays, and linear schedulers to make the learning rate dynamic. In the beginning, we used 3 epochs with a learning rate of 2e-5, batch size of 32, and warmup_steps of 500 steps to reduce the learning rate to not significantly impact the training. After training the BERT model, the training accuracy was 87%. The testing results can be seen in our results section.
     <h3>AutoGluon</h3>
     <p>
       We trained the model using a combination of regression, KNN, and classical neural networks to analyze the other features (i.e. useful count, cool count, funny count) in conjunction with the flag (marking a fake or real review) given by the text analysis model (BERT) to produce a single binary classification flag for the review. AutoGluon would then take all models and cross-train them against each other at each epoch. After completion, we would be given an output model that would be a second-stage evaluation algorithm.
+      With both of these models, we would be able to have the following two-stage analysis flow:
+        1.Start with a raw review (including unencoded text)
+        2.Tokenize the text and pass the text through BERT to receive a BERT flag
+        3.Pass the other parameters with the BERT flag through AutoGluon to receive a single classification for review
+      After a prediction is made for a review, we could look at the reviewer ID associated with the review and trace it back to the user that made that review.
+      Unfortunately, given time and resource constraints, we ran out of memory when trying to make more than one prediction and were not able to accurately test our final model’s effectiveness in prediction-making.  
     </p>
     <h2>Results</h2>
     <div class="graph-item">
+      <h3>BERT base cased test results:</h3>
       <img src="results.jpeg" alt="Results" class="project-graph">
     </div>
+    <h3>Discussion</h3>
+    <p>
+      Based on the results of the BERT model, we have determined that exclusively using the contents of the review is not enough information for the model to accurately predict if a review is fraudulent. Although the BERT model’s performance accuracy was 87%, this does not indicate that it was a good model because 87% of the training data were real reviews. The imbalance of the dataset is likely the reason the BERT model did “so well.” In the future, it would be beneficial to use alternative sampling methods for the training data (besides only stratification) like cross-validation. We could have also increased the number of epochs used and used a larger dataset to get a better result. 
+    </p>
+    <h2>References</h2>
+    <p>
+      [1] Statista. (2022). Cumulative number of reviews submitted to Yelp from 2009 to 2021. https://www.statista.com/statistics/278032/cumulative-number-of-reviews-submitted-to-yelp/
+      [2] Luca, M. (2016). Reviews, reputation, and revenue: The case of Yelp. com. Com (March 15, 2016). Harvard Business School NOM Unit Working Paper, (12-016).
+    </p>
   </section>
 </body>
 </html>
